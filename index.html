@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nyoq's Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #0f0f0f, #1a1a1a);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      transition: filter 0.4s ease;
+    }
+    .blurred {
+      filter: blur(6px);
+    }
+    header {
+      padding: 60px 0 20px;
+    }
+    h1 {
+      font-size: 3.5rem;
+      color: #ff4d4d;
+      text-shadow: 0 0 15px rgba(255, 77, 77, 0.7), 0 0 25px rgba(255, 77, 77, 0.5);
+      margin: 0;
+    }
+    button {
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 14px 28px;
+      margin: 30px 0;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 77, 77, 0.9);
+    }
+    .links {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+    .link-item {
+      display: flex;
+      align-items: center;
+      background: #222;
+      border-radius: 10px;
+      padding: 12px 18px;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+    }
+    .link-item:hover {
+      background: #333;
+      transform: translateY(-2px);
+    }
+    .link-item img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+    }
+    a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    .bio-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1a1a1a;
+      padding: 0;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255, 77, 77, 0.6);
+      z-index: 999;
+      color: #ff4d4d;
+      font-size: 1.1rem;
+      text-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
+      animation: fadeIn 0.3s ease;
+      width: 320px;
+      max-width: 90%;
+      user-select: none;
+      touch-action: none;
+    }
+    .bio-popup.show {
+      display: block;
+    }
+    .popup-header {
+      background: #111;
+      padding: 10px 12px;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      display: flex;
+      justify-content: flex-end;
+      cursor: grab;
+    }
+    .popup-header:active {
+      cursor: grabbing;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      color: #ff4d4d;
+      font-size: 1.2rem;
+      cursor: pointer;
+      text-shadow: 0 0 8px rgba(255, 77, 77, 0.8);
+      margin-top: 4px;
+      user-select: none;
+      touch-action: manipulation;
+      pointer-events: auto;
+    }
+    .close-btn:hover {
+      color: #fff;
+    }
+    .popup-body {
+      padding: 20px;
+      line-height: 1.4;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    footer {
+      padding: 30px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div id="mainContent">
+    <header>
+      <h1>nyo luaunyos bio</h1>
+      <button onclick="showBio()">my bio!</button>
+    </header>
+    <div class="links">
+      <div class="link-item">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="YouTube Logo" />
+        <a href="https://youtube.com/@nyoq" target="_blank">youtube channel</a>
+      </div>
+      <div class="link-item">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" />
+        <a href="https://github.com/ny0q" target="_blank">github</a>
+      </div>
+    </div>
+    <footer>
+      &copy; 2025 nyoq ars
+    </footer>
+  </div>
+
+  <div id="bioPopup" class="bio-popup">
+    <div class="popup-header" id="dragHandle">
+      <button class="close-btn" onclick="hideBio()">✖</button>
+    </div>
+    <div class="popup-body">
+      i lowkey do python but i mostly script on luau.
+    </div>
+  </div>
+
+  <script>
+    const bio = document.getElementById("bioPopup");
+    const main = document.getElementById("mainContent");
+    const dragHandle = document.getElementById("dragHandle");
+    let offsetX = 0, offsetY = 0, dragging = false;
+
+    function showBio() {
+      if (!bio.classList.contains("show")) {
+        bio.classList.add("show");
+        main.classList.add("blurred");
+      }
+    }
+    function hideBio() {
+      bio.classList.remove("show");
+      main.classList.remove("blurred");
+    }
+
+    function dragStart(e) {
+      if (e.target.classList.contains('close-btn')) return;
+      e.preventDefault();
+      dragging = true;
+      const rect = bio.getBoundingClientRect();
+      if(e.type === "touchstart") {
+        const touch = e.touches[0];
+        offsetX = touch.clientX - rect.left;
+        offsetY = touch.clientY - rect.top;
+      } else {
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+      }
+      document.addEventListener(e.type === "touchstart" ? "touchmove" : "mousemove", dragMove, { passive: false });
+      document.addEventListener(e.type === "touchstart" ? "touchend" : "mouseup", dragEnd);
+    }
+    function dragMove(e) {
+      if(!dragging) return;
+      e.preventDefault();
+      let clientX, clientY;
+      if(e.type === "touchmove") {
+        const touch = e.touches[0];
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      bio.style.left = (clientX - offsetX) + "px";
+      bio.style.top = (clientY - offsetY) + "px";
+      bio.style.transform = "none";
+    }
+    function dragEnd(e) {
+      dragging = false;
+      document.removeEventListener("mousemove", dragMove);
+      document.removeEventListener("mouseup", dragEnd);
+      document.removeEventListener("touchmove", dragMove);
+      document.removeEventListener("touchend", dragEnd);
+    }
+
+    dragHandle.addEventListener("mousedown", dragStart);
+    dragHandle.addEventListener("touchstart", dragStart, { passive: false });
+  </script>
+</body>
+</html>
